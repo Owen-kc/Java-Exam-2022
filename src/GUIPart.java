@@ -16,12 +16,11 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
     private JTable table = new JTable();
 
     private JScrollPane scrollPane;
-    private JComboBox<String> choices;
+    private JComboBox<String> choices = new JComboBox<>();
 
     private JPanel p1 = new JPanel();
     private JPanel p2 = new JPanel();
     private JPanel p3 = new JPanel();
-
 
 
     private JTextPane textArea = new JTextPane();
@@ -29,7 +28,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
     ///ADD NEW PERSON
 
-    String[] partyOptions = {"The Workers Party", "The Labour Party", "Sinn Fein", "People Before Profit", "Non Party", "Green Party", "Fine Gael", "Fiann Fail", "Comhar Crastana"};
+    //String[] partyOptions = {"The Workers Party", "The Labour Party", "Sinn Fein", "People Before Profit", "Non Party", "Green Party", "Fine Gael", "Fiann Fail", "Comhar Crastana"};
     //labels
     private JLabel buttonLabel = new JLabel("Click to Add");
     private JLabel addNoLabel = new JLabel("Number");
@@ -37,14 +36,16 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
     private JLabel addFirstNameLabel = new JLabel("First Name");
     private JLabel addPartyddLabel = new JLabel("Party");
     private JLabel addLocalAreaLabel = new JLabel("Local Area");
+    private JLabel addAddressLabel= new JLabel("Address");
 
 
     //textpanes
     private JTextPane addNo = new JTextPane();
     private JTextPane addSurname = new JTextPane();
     private JTextPane addFirstname = new JTextPane();
-    private JComboBox<String> partyDropdown = new JComboBox<>(partyOptions);
+    private JComboBox<String> partyDropdown = new JComboBox<>();
     private JTextPane addLocalarea = new JTextPane();
+    private JTextPane addAddress = new JTextPane();
     ///END ADD NEW PERSON
 
     private JButton addButton = new JButton("Add");
@@ -76,25 +77,13 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
         csv = new ReadCSV(selectedFile);
 
-        DefaultComboBoxModel<String> options = new DefaultComboBoxModel<>();
-        choices = new JComboBox<>(options);
 
-
-        for (LocalEleStat stat: csv.getStats()) {
-
-            String area = stat.getLocalElectoralArea();
-
-            if(options.getIndexOf(area) == -1)
-            {
-                options.addElement(area);
-            }
-        }
 
         choices.addActionListener(this);
 
         //___________________________________________
         // Panel 1
-
+        fillAreaCombo();
         p1.setLayout(new GridBagLayout());
 
 
@@ -153,7 +142,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
         //___________________________________________
         // Panel 3
-
+        fillPartyCombo();
         p3.setLayout(new GridBagLayout());
         c = new GridBagConstraints();
         addButton.addActionListener(this);
@@ -196,6 +185,11 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         this.p3.add(addLocalarea, c);
         c.gridy = 12;
 
+        this.p3.add(addAddressLabel, c);
+        c.gridy = 13;
+        this.p3.add(addAddress, c);
+        c.gridy = 14;
+
         //p3.add(addNo, c);
         //p3.add(addSurname, c);
         //p3.add(addFirstname, c);
@@ -212,7 +206,21 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         this.setVisible(true);
     }
 
-    public void fillCombo()
+    public void fillAreaCombo()
+    {
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+
+        for(LocalEleStat stat : this.csv.getStats())
+        {
+            if(model.getIndexOf(stat.getLocalElectoralArea()) == -1)
+            {
+                model.addElement(stat.getLocalElectoralArea());
+            }
+        }
+        this.choices.setModel(model);
+    }
+
+    public void fillPartyCombo()
     {
         DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
 
@@ -266,18 +274,43 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         textArea.setText(display.toString());
     }
 
+    public void addCandidate(String number, String firstName, String surname, String address, String party, String localElectoralArea) throws Exception
+    {
+        if(number.isEmpty()){
+            throw new Exception("Number cannot be empty!");
+        }
+        if(surname.isEmpty()){
+            throw new Exception("Surname name cannot be empty!");
+        }
+        if(firstName.isEmpty()){
+            throw new Exception("First name cannot be empty!");
+        }
+        if(localElectoralArea.isEmpty()){
+            throw new Exception("Local Electoral Area cannot be empty!");
+        }
+        if(address.isEmpty()){
+            throw new Exception("Address Area cannot be empty!");
+        }
+        this.csv.addStat(new LocalEleStat(number, firstName, surname, address, party, localElectoralArea));
+        JOptionPane.showMessageDialog(this, firstName+ " " + surname + " has been added");
+    }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String number =  addNo.getText();
         if (e.getSource() == choices){
             String area = (String)choices.getSelectedItem();
             setArea(area);
         }
         if (e.getSource() == addButton)
         {
-            //***
-            csv.addStat(new LocalEleStat(addNo.getText(),addFirstname.getText(),addSurname.getText(),addLocalarea.getText(),partyDropdown.getSelectedIndex()));
-            //csv.addStat(new LocalEleStat("1,Rock,Noel,\"69 Pinewood Crescent, Glasnevin North, Dublin 9\",Fine Gael,Artane/Whitehall,,,,,"));
+            try{
+                addCandidate(addNo.getText().trim(), addFirstname.getText(), addSurname.getText(), addAddress.getText(),
+                        (String) partyDropdown.getSelectedItem(), addLocalarea.getText() );
+            }catch (Exception exception){
+                JOptionPane.showMessageDialog(this, exception.getMessage());
+            }
         }
         if (e.getSource() == removeButton)
         {
@@ -294,6 +327,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
         if(temp.getSelectedIndex() == 0)
         {
+            fillAreaCombo();
             String area = (String)choices.getSelectedItem();
             setArea(area);
         }

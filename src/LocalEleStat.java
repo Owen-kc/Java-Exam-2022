@@ -33,6 +33,15 @@ public class LocalEleStat {
         }
     }
 
+    public LocalEleStat(String number, String firstName, String surname, String address, String party, String localElectoralArea) {
+        this.no = number;
+        this.firstName = firstName;
+        this.surname = surname;
+        this.address = new Address(address);
+        this.party = party;
+        this.localElectoralArea = localElectoralArea;
+    }
+
     private String encode(String s)
     {
         ByteBuffer buffer = StandardCharsets.UTF_8.encode(s);
