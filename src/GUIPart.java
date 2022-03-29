@@ -11,8 +11,9 @@ import java.io.File;
 
 public class GUIPart extends JFrame implements ActionListener, ChangeListener, WindowListener {
 
-    private JTabbedPane tabbedPane = new JTabbedPane();
 
+    //add tabbedpane, table, scrollpane, comboboxes, textpanes and panels to gui
+    private JTabbedPane tabbedPane = new JTabbedPane();
     private JTable table = new JTable();
 
     private JScrollPane scrollPane;
@@ -28,8 +29,8 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
     ///ADD NEW PERSON
 
-    //String[] partyOptions = {"The Workers Party", "The Labour Party", "Sinn Fein", "People Before Profit", "Non Party", "Green Party", "Fine Gael", "Fiann Fail", "Comhar Crastana"};
-    //labels
+
+    //labels for add entry
     private JLabel buttonLabel = new JLabel("Click to Add");
     private JLabel addNoLabel = new JLabel("Number");
     private JLabel addSurnameLabel = new JLabel("Surname");
@@ -39,111 +40,106 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
     private JLabel addAddressLabel= new JLabel("Address");
 
 
-    //textpanes
+    //textpanes for add entry incl combo box for adding party for new entry
     private JTextPane addNo = new JTextPane();
     private JTextPane addSurname = new JTextPane();
     private JTextPane addFirstname = new JTextPane();
     private JComboBox<String> partyDropdown = new JComboBox<>();
     private JTextPane addLocalarea = new JTextPane();
     private JTextPane addAddress = new JTextPane();
-    ///END ADD NEW PERSON
 
+    //add and remove button
     private JButton addButton = new JButton("Add");
     private JButton removeButton = new JButton("Remove");
 
-    private ReadCSV csv;
+    private ReadCSV csv;        //declare ReadCSV file as csv to reference
 
     public GUIPart()
     {
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setTitle("GUI Part");
-        this.setSize(750,750);
+        this.setSize(750,750);              //set title, size, layout etc
         this.setLayout(new BorderLayout());
         this.addWindowListener(this);
     }
 
     public void init()
     {
-        File selectedFile = null;
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File("."));
-        int result = fileChooser.showOpenDialog(this.getContentPane());
+        File selectedFile = null;                                           //get selected csv file
+        JFileChooser fileChooser = new JFileChooser();                      //new file chooser
+        fileChooser.setCurrentDirectory(new File("."));            //set file chooser to the selected file
+        int result = fileChooser.showOpenDialog(this.getContentPane());     //display result in content pane
 
         if (result == JFileChooser.APPROVE_OPTION)
         {
-            selectedFile = fileChooser.getSelectedFile();
+            selectedFile = fileChooser.getSelectedFile();   //file passed through filechooser.getselectedfile
 
         }
 
-        csv = new ReadCSV(selectedFile);
-
-
-
+        csv = new ReadCSV(selectedFile);            //read selected file through class csv
         choices.addActionListener(this);
 
         //___________________________________________
         // Panel 1
-        fillAreaCombo();
-        p1.setLayout(new GridBagLayout());
+        fillAreaCombo();                                    //populate the area dropdown
+        p1.setLayout(new GridBagLayout());                  //set gbc for pane1
+        GridBagConstraints c = new GridBagConstraints();    //declare gridbagconstraints as c
 
+        c.insets = new Insets(0,5,0,5); //set insets for gbc
 
-        GridBagConstraints c = new GridBagConstraints();
-
-        c.insets = new Insets(0,5,0,5);
-
-        c.gridx = 0;
+        c.gridx = 0;                                         //declare gridx/y
         c.gridy = 0;
 
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.HORIZONTAL;              //fill horizontally
 
-        p1.add(choices, c);
+        p1.add(choices, c);                                  //add choices to pane1, with gridbagconstraints applied (c is gridbagconstraints)
 
-        c.gridy = 1;
+        c.gridy = 1;                                         //add to gridy =1, fill both, weight definition
         c.fill = GridBagConstraints.BOTH;
         c.weightx= 1.0;
         c.weighty= 1.0;
 
-        p1.add(textArea, c);
+        p1.add(textArea, c);                                 //add text area with gridbagconstraints
 
-        String area = (String)choices.getSelectedItem();
+        String area = (String)choices.getSelectedItem();     //get selected area from dropdown
         setArea(area);
 
         //___________________________________________
         // Panel 2
 
-        p2.setLayout(new GridBagLayout());
-        c = new GridBagConstraints();
-        c.insets = new Insets(0,5,0,5);
+        p2.setLayout(new GridBagLayout());                   //set layout of pane2, gridbagconstraints
+        c = new GridBagConstraints();                        //once again, declare c to be gridbagconstraints
+        c.insets = new Insets(0,5,0,5); //insets again
         c.gridx = 0;
-        c.gridy = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridy = 0;                                         //declare gridx/y
+        c.fill = GridBagConstraints.HORIZONTAL;              //fill gridbagconstraints horizontally
 
-        updateTable();
+        updateTable();                                      //call updatetable method
 
-        table.setAutoCreateRowSorter(true);
+        table.setAutoCreateRowSorter(true);                 //create row sorter
 
-        scrollPane = new JScrollPane(table);
+        scrollPane = new JScrollPane(table);                //add scrollpane to table
 
         c.fill = GridBagConstraints.BOTH;
-        c.gridx = 0;
+        c.gridx = 0;                                        //add gridbagconstraints gridx/y, weight
         c.gridy = 0;
         c.weightx= 1.0;
         c.weighty= 0.9;
 
-        p2.add(scrollPane, c);
+        p2.add(scrollPane, c);                              //add scrollpane to pane2 with gridbagconstraints
 
         c.fill = GridBagConstraints.NONE;
-        c.gridy = 1;
+        c.gridy = 1;                                        //set grid
         c.weighty= .1;
 
-        p2.add(removeButton,c);
+        p2.add(removeButton,c);                             //add remove button to pane with gridbagconstraints
 
-        removeButton.addActionListener(this);
+        removeButton.addActionListener(this);             //add action listener to removebutton
 
         //___________________________________________
         // Panel 3
-        fillPartyCombo();
-        p3.setLayout(new GridBagLayout());
+        fillPartyCombo();                                   //populate dropdown menu for party dropdown
+        p3.setLayout(new GridBagLayout());                  //add gridbagconstraints to pane3, with an action listener for addbutton
         c = new GridBagConstraints();
         addButton.addActionListener(this);
 
@@ -151,7 +147,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         //add person
         c.insets = new Insets(10, 10, 10, 10);
         c.weightx = 0.5;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.fill = GridBagConstraints.HORIZONTAL;                     //create insets, weight, gridx/y for pane3
         c.gridx = 0;
         c.gridy = 0;
 
@@ -172,8 +168,8 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
         this.p3.add(addFirstNameLabel, c);
         c.gridy=7;
-        this.p3.add(addFirstname, c);
-        c.gridy = 8;
+        this.p3.add(addFirstname, c);               //here, add the labels and the textfields for each respective part (number, name, surname etc)
+        c.gridy = 8;                                //use gridbagconstraints for this to layout the add new person page
 
         this.p3.add(addPartyddLabel, c);
         c.gridy=9;
@@ -190,54 +186,52 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         this.p3.add(addAddress, c);
         c.gridy = 14;
 
-        //p3.add(addNo, c);
-        //p3.add(addSurname, c);
-        //p3.add(addFirstname, c);
-        //end addperson
-
 
         tabbedPane.add("Select Area",p1);
-        tabbedPane.add("View All",p2);
+        tabbedPane.add("View All",p2);      //add tabbedpane to all three pages
         tabbedPane.add("Add New",p3);
 
-        tabbedPane.addChangeListener(this);
-        this.add(tabbedPane, BorderLayout.CENTER);
-        c.gridy = 1;
-        this.setVisible(true);
+        tabbedPane.addChangeListener(this);         //change listenener for tabbedpane
+        this.add(tabbedPane, BorderLayout.CENTER);    //add tabbedpane to pane, center it
+        c.gridy = 1;                                  //gridy=1 for this
+        this.setVisible(true);                        //set visible
     }
 
+    //fill area combo method, cycle through the area and automatically fill the areas from the csv file into the dropdown menu
     public void fillAreaCombo()
     {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();      //default comboboxmodel
 
-        for(LocalEleStat stat : this.csv.getStats())
+        for(LocalEleStat stat : this.csv.getStats())                            //for localelestat, getStats for csv
         {
-            if(model.getIndexOf(stat.getLocalElectoralArea()) == -1)
+            if(model.getIndexOf(stat.getLocalElectoralArea()) == -1)            //if index = -1, add element to area dropdown
             {
                 model.addElement(stat.getLocalElectoralArea());
             }
         }
-        this.choices.setModel(model);
+        this.choices.setModel(model);                                           //set model choices to be the choices strings declared above
     }
 
+    //fill party combo method, cycle through the party and automatically fill the possible parties from the csv file into the dropdown menu
     public void fillPartyCombo()
     {
-        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();      //defaultcombobox
 
         for(LocalEleStat stat : this.csv.getStats())
         {
-            if(model.getIndexOf(stat.getParty()) == -1)
+            if(model.getIndexOf(stat.getParty()) == -1)                         //same as above, if index = -1, add element to party dropdown
             {
                 model.addElement(stat.getParty());
             }
         }
-        this.partyDropdown.setModel(model);
+        this.partyDropdown.setModel(model);                                     //set model choices to be the choices strings declared above
     }
 
 
+    //update table method, called when new object added, for example
     private void updateTable()
     {
-        String [] cols = csv.getHeadings();
+        String [] cols = csv.getHeadings();     //array for headings
 
         DefaultTableModel model = new DefaultTableModel(cols, 0);
         for(LocalEleStat stat : csv.getStats())
@@ -245,7 +239,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
             model.addRow(new Object[]{
                     stat.getNo(),
                     stat.getSurname(),
-                    stat.getFirstName(),
+                    stat.getFirstName(),            //add new row, this is used when a new object is added in the add pane
                     stat.getAddress(),
                     stat.getParty(),
                     stat.getLocalElectoralArea()
@@ -257,20 +251,18 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
     public void setArea(String area)
     {
-        textArea.setText(" ");
-        StringBuilder display = new StringBuilder("<html><table>");
-        for(LocalEleStat stat: csv.getStats())
+        textArea.setText(" ");                                                  //set text area to empty string
+        StringBuilder display = new StringBuilder("<html><table>");             //stringbuilder definition
+        for(LocalEleStat stat: csv.getStats())                                  //for csv stats
         {
             if(stat.getLocalElectoralArea().equals(area))
             {
-                display.append(stat.toString());
-
+                display.append(stat.toString());                                //display appended stat.tostring
             }
 
         }
         display.append("</table></html>");
-
-        textArea.setContentType("text/html");
+        textArea.setContentType("text/html");                                   //textarea content type set to text/html
         textArea.setText(display.toString());
     }
 
@@ -283,8 +275,8 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
             throw new Exception("Surname name cannot be empty!");
         }
         if(firstName.isEmpty()){
-            throw new Exception("First name cannot be empty!");
-        }
+            throw new Exception("First name cannot be empty!");         //error checking, if any of the entry panes are empty, throw exception and don't add person
+        }                                                               //one for each entry, number, name etc
         if(localElectoralArea.isEmpty()){
             throw new Exception("Local Electoral Area cannot be empty!");
         }
@@ -292,30 +284,29 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
             throw new Exception("Address Area cannot be empty!");
         }
         this.csv.addStat(new LocalEleStat(number, firstName, surname, address, party, localElectoralArea));
-        JOptionPane.showMessageDialog(this, firstName+ " " + surname + " has been added");
-    }
+        JOptionPane.showMessageDialog(this, firstName+ " " + surname + " has been added");      //show the name of the person added via
+    }                                                                                                                 //via Joption (prompt) concat name, empty string, surname and has been added
 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        String number =  addNo.getText();
         if (e.getSource() == choices){
-            String area = (String)choices.getSelectedItem();
+            String area = (String)choices.getSelectedItem();        //set area from dropdown
             setArea(area);
         }
-        if (e.getSource() == addButton)
+        if (e.getSource() == addButton)     //if add buttonn is clicked
         {
             try{
                 addCandidate(addNo.getText().trim(), addFirstname.getText(), addSurname.getText(), addAddress.getText(),
-                        (String) partyDropdown.getSelectedItem(), addLocalarea.getText() );
+                        (String) partyDropdown.getSelectedItem(), addLocalarea.getText() );                                     //add the new object from values from textpanes
             }catch (Exception exception){
-                JOptionPane.showMessageDialog(this, exception.getMessage());
+                JOptionPane.showMessageDialog(this, exception.getMessage());            //exception, show dialog from .getmessage
             }
         }
         if (e.getSource() == removeButton)
         {
             String value = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
-            csv.removeStat(value);
+            csv.removeStat(value);                                                                          //remove button, if clicked, remove the selected row
             updateTable();
         }
 
@@ -328,12 +319,12 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
         if(temp.getSelectedIndex() == 0)
         {
             fillAreaCombo();
-            String area = (String)choices.getSelectedItem();
+            String area = (String)choices.getSelectedItem();                //statechanged, for area dropdown
             setArea(area);
         }
         else if (temp.getSelectedIndex() == 1)
         {
-            updateTable();
+            updateTable();                                                  //update table index if selected
         }
 
     }
@@ -346,7 +337,7 @@ public class GUIPart extends JFrame implements ActionListener, ChangeListener, W
 
     @Override
     public void windowClosing(WindowEvent windowEvent) {
-        csv.writeFile();
+        csv.writeFile();            //write to csv
     }
 
     @Override

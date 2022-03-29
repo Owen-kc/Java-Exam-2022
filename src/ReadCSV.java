@@ -7,87 +7,87 @@ import java.util.Scanner;
 
 public class ReadCSV {
 
-    private ArrayList<LocalEleStat> stats = new ArrayList<>();
-    private String [] headings;
+    private ArrayList<LocalEleStat> stats = new ArrayList<>();          //stats arraylist decleration
+    private String [] headings;                                         //array for headings
 
-    public ReadCSV(File f)
+    public ReadCSV(File f)          //readcsv method
     {
-        try{
+        try{                        //trycatch block
 
-            Scanner sc = new Scanner(f);
+            Scanner sc = new Scanner(f);                    //scanner
 
-            sc.nextLine();//skip first heading
-            headings = sc.nextLine().split(",");//add second row to headings
+            sc.nextLine();                                    //skip first heading
+            headings = sc.nextLine().split(",");        //add second row to headings
 
-            while (sc.hasNextLine())
+            while (sc.hasNextLine())                         //while scanner has next line
             {
                 try {
-                    stats.add(new LocalEleStat(sc.nextLine()));
+                    stats.add(new LocalEleStat(sc.nextLine()));     //try to add to stats with new LocalEleStat obj, scanner next line
                 }
                 catch (IllegalArgumentException ex)
                 {
-                    // do nothing
+                                                                     //if exception, do nothing
                 }
             }
 
         }
         catch (Exception e)
         {
-            e.printStackTrace();;
+            e.printStackTrace();;               //exception e, printstacktrrace
         }
     }
 
     public ArrayList<LocalEleStat> getStats()
     {
         return stats;
-    }
+    }           //return arraylist stats
     public String [] getHeadings()
     {
         return headings;
-    }
+    }                   //return array getheadings
 
     public void addStat(LocalEleStat s)
     {
         stats.add(s);
-    }
+    }               //add to stats
 
     public void removeStat(String s)
     {
         int i = -1;
         for(LocalEleStat stat : stats)
         {
-            if(stat.getNo().equals(s))
+            if(stat.getNo().equals(s))                                  //remove from stat,
             {
                 i = stats.indexOf(stat);
-                break;
+                break;                                                  //stats = index of stat arraylist
             }
         }
 
-        if(i != -1)
+        if(i != -1)                                                     //if i is not -1, remove i from stats
             stats.remove(i);
 
     }
 
-    public void writeFile()
+    public void writeFile()                                             //write to file
     {
         try {
 
             System.out.println("here");
-            File f = new File("output"+ (int)((Math.random()*1000)) + ".csv");
+            File f = new File("output"+ (int)((Math.random()*1000)) + ".csv");      //random number for printed out csv file, add.csv to end
 
             System.out.println(f.toString());
             f.createNewFile();
-            PrintWriter pw = new PrintWriter(f);
+            PrintWriter pw = new PrintWriter(f);            //printwriter for printing to csv file
 
             for(LocalEleStat stat : stats)
             {
-                pw.println(stat.toCSV());
+                pw.println(stat.toCSV());                       //printwriter from stat.tocsv
             }
 
-            pw.close();
+            pw.close();                                     //close printerwriter
         }
         catch(Exception e)
-        {
+        {                                                   //exception, printstacktrace
             e.printStackTrace();
         }
     }

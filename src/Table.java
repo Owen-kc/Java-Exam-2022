@@ -5,8 +5,7 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 
 public class Table extends JFrame {
-    private JTable table;
-
+    private JTable table;               //table, pane declarations
     private JScrollPane pane;
 
     public Table()
@@ -15,8 +14,11 @@ public class Table extends JFrame {
         this.setSize(400,400);
         this.setTitle("Tables");
     }
+
+    //init method
     public void init()
     {
+        //data for columns, data
         String [] cols = new String[]{"name", "age", "location"};
 
         Object [][] data ={
@@ -65,16 +67,18 @@ public class Table extends JFrame {
                 {"Jane", "30", "Athlone"},
         };
 
+        //that is printed out in the pane
 
 
-        table = new JTable(data, cols);
 
-        pane = new JScrollPane(table);
+        table = new JTable(data, cols);     //declare table attributes
 
-        table.setAutoCreateRowSorter(true);
+        pane = new JScrollPane(table);      //add scrollpane to table
+
+        table.setAutoCreateRowSorter(true);     //autosorter for table
 
         this.add(pane);
-
+                                            //add and set visible
         this.setVisible(true);
     }
 
